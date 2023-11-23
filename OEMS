@@ -1,0 +1,89 @@
+import pymysql
+
+class employee:
+    def _init_(self):
+        self.id=""
+        self.name=""
+        self.work=""
+        self.sal=""
+        self.con=pymysql.connect(host="localhost",database="data",user="root",password="")
+        self.sql=""
+        self.cur=self.con.cursor()
+        self.res=""
+
+    def adddata(self):
+        print("Register")
+        self.cur.execute("select max(pid)+1 from data1")
+        self.res=self.cur.fetchall()
+        if len(self.res)>0:
+            for x in self.res:
+                self.id=x[0]
+        else:
+            self.id=int(input("Enter Employee Id : "))
+        self.name=input("Enter Employee Name : ")
+        self.work=input("Enter Employee work : ")
+        self.sal=float(input("Enter Employee Salary : "))
+        self.sql=f"insert into data1 values({self.id},'{self.name}','{self.work}',{self.sal})"
+        self.cur.execute(self.sql)
+        print(f"Employee Id {self.id} Registered")
+
+    def fnddata(self):
+        print("Search Data")
+        self.id=int(input("Enter Employee Id to Search : "))
+        self.sql=f"select * from data1 where pid={self.id}"
+        self.cur.execute(self.sql)
+        self.res=self.cur.fetchall()
+        if len(self.res)>0:
+            for x in self.res:
+                print(f"Employee Name   : {x[1]}")
+                print(f"Employee Work   : {x[2]}")
+                print(f"Employee Salary : {x[3]}")
+        else:
+            print(f"Employee ID is {self.id} ")
+
+    def chgdata(self):
+        print("Update Data")
+        self.id = int(input("Enter Employee Id to Update : "))
+        self.sql = f"select * from data1 where pid={self.id}"
+        self.cur.execute(self.sql)
+        self.res = self.cur.fetchall()
+        if len(self.res) > 0:
+            for x in self.res:
+                self.work=input("Enter New Work : ")
+                self.sal=float(input("Enter New Salary : "))
+                self.sql=f"update data1 set pwork='{self.work}',psal={self.sal} where pid={self.id}"
+                self.cur.execute(self.sql)
+                print(f"Employee Id {self.id} Updated")
+        else:
+            print(f"Employee ID is {self.id} ")
+
+    def remdata(self):
+            print("Remove Data")
+            self.id = int(input("Enter Employee Id to Remove : "))
+            self.sql = f"select * from data1 where pid={self.id}"
+            self.cur.execute(self.sql)
+            self.res = self.cur.fetchall()
+            if len(self.res) > 0:
+                for x in self.res:
+                    self.sql = f"delete from data1 where pid={self.id}"
+                    self.cur.execute(self.sql)
+                    print(f"Employee Id {self.id} Removed")
+            else:
+                print(f"Employee ID is {self.id} ")
+
+
+emp=employee()
+while(1):
+    ch=int(input("1.Add Data\n2.Find Data\n3.Change Data\n4.Remove\n5.Exit\nEnter Choice : "))
+    if ch==1:
+        emp.adddata()
+    elif ch==2:
+        emp.fnddata()
+    elif ch==3:
+        emp.chgdata()
+    elif ch==4:
+        emp.remdata()
+    elif ch==5:
+        exit(0)
+    else:
+        print("Wrong Choice...")
